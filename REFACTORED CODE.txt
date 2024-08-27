@@ -1,0 +1,126 @@
+REFACTORED CODE
+
+# Refactored Code
+
+class Student:
+    """Represents a student with basic attributes."""
+    def __init__(self, id, name, age, major):
+        self.id = id
+        self.name = name
+        self.age = age
+        self.major = major
+
+class StudentService:
+    """Service for updating and displaying student information."""
+    @staticmethod
+    def update_student(student, name=None, age=None, major=None):
+        """Updates the student's information based on provided parameters."""
+        if name:
+            student.name = name
+        if age:
+            student.age = age
+        if major:
+            student.major = major
+
+    @staticmethod
+    def display_student(student):
+        """Displays student's details."""
+        print(f"ID: {student.id}, Name: {student.name}, Age: {student.age}, Major: {student.major}")
+
+class StudentDatabase:
+    """Handles CRUD operations for students in the database."""
+    def __init__(self):
+        self.students = []
+
+    def add_student(self, student):
+        """Adds a student to the database."""
+        self.students.append(student)
+
+    def remove_student(self, student_id):
+        """Removes a student from the database by ID."""
+        self.students = [student for student in self.students if student.id != student_id]
+
+    def find_student_by_id(self, student_id):
+        """Finds a student by ID."""
+        for student in self.students:
+            if student.id == student_id:
+                return student
+        return None
+
+    def display_all_students(self):
+        """Displays all students in the database."""
+        for student in self.students:
+            StudentService.display_student(student)
+
+class StudentManagementSystem:
+    """Main system to manage students."""
+    def __init__(self, database):
+        self.database = database
+
+    def add_new_student(self, id, name, age, major):
+        """Adds a new student."""
+        student = Student(id, name, age, major)
+        self.database.add_student(student)
+
+    def delete_student(self, student_id):
+        """Deletes a student by ID."""
+        self.database.remove_student(student_id)
+
+    def update_student_info(self, student_id, name=None, age=None, major=None):
+        """Updates student's information."""
+        student = self.database.find_student_by_id(student_id)
+        if student:
+            StudentService.update_student(student, name, age, major)
+
+    def show_all_students(self):
+        """Displays all students."""
+        self.database.display_all_students()
+
+def show_menu():
+    """Displays a simple menu for interaction."""
+    print("Student Management System Menu:")
+    print("1. Add a new student")
+    print("2. Delete a student")
+    print("3. Update student information")
+    print("4. Show all students")
+    print("5. Exit")
+
+def main():
+    """Main program loop for interacting with the student management system."""
+    system = StudentManagementSystem(StudentDatabase())
+    
+    while True:
+        show_menu()
+        choice = input("Enter your choice (1-5): ")
+
+        if choice == '1':
+            id = int(input("Enter student ID: "))
+            name = input("Enter student name: ")
+            age = int(input("Enter student age: "))
+            major = input("Enter student major: ")
+            system.add_new_student(id, name, age, major)
+
+        elif choice == '2':
+            student_id = int(input("Enter student ID to delete: "))
+            system.delete_student(student_id)
+
+        elif choice == '3':
+            student_id = int(input("Enter student ID to update: "))
+            name = input("Enter new name (or press Enter to skip): ")
+            age = input("Enter new age (or press Enter to skip): ")
+            major = input("Enter new major (or press Enter to skip): ")
+            system.update_student_info(student_id, name=name if name else None, age=int(age) if age else None, major=major if major else None)
+
+        elif choice == '4':
+            system.show_all_students()
+
+        elif choice == '5':
+            print("Exiting system.")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+# Example Usage
+if __name__ == "__main__":
+    main()
